@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TableDash — Pay ₹1</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f5f3ef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:20px;padding:24px;max-width:360px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.08)}
+.header{text-align:center;margin-bottom:20px}
+.tag{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#aaa;margin-bottom:6px}
+.name{font-size:22px;font-weight:700;color:#1a1714;margin-bottom:3px}
+.amount{font-size:42px;font-weight:700;color:#1a1714;line-height:1;margin:12px 0 4px}
+.upi-id{font-size:11px;color:#aaa;font-family:monospace}
+.divider{height:1px;background:#f0ede8;margin:16px 0}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#aaa;margin-bottom:10px}
+/* App-specific buttons */
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.app-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:12px;border:none;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity .15s}
+.app-btn:active{opacity:.7}
+.gpay{background:#4285f4;color:#fff}
+.phonepe{background:#5f259f;color:#fff}
+.paytm{background:#002970;color:#fff}
+.bhim{background:#00a650;color:#fff}
+.generic{background:#1a1714;color:#fff;grid-column:span 2}
+.app-icon{font-size:18px}
+/* Status */
+.status{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13px;text-align:center;display:none}
+.status.show{display:block}
+.pending{background:#fff8e8;color:#b86c1a;border:1px solid #f5d98a}
+.success{background:#e8f5e0;color:#2a7a4a;border:1px solid #a8d89a}
+/* Note */
+.note{font-size:11px;color:#bbb;text-align:center;margin-top:12px;line-height:1.6}
+/* Debug */
+.debug{background:#f8f8f8;border-radius:10px;padding:12px;margin-top:14px}
+.debug-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#bbb;margin-bottom:6px}
+.debug-row{display:flex;justify-content:space-between;font-size:10px;padding:2px 0}
+.dl{color:#bbb}
+.dv{font-family:monospace;color:#666;word-break:break-all;text-align:right;max-width:200px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="tag">TABLEDASH · PAYMENT TEST</div>
+    <div class="name">S Hemanth Kumar</div>
+    <div class="amount">₹1</div>
+    <div class="upi-id">9535381386@paytm</div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-label">Tap your UPI app to pay</div>
+
+  <div class="app-grid">
+    <!-- GPay — uses tez:// scheme, bypasses QR confusion -->
+    <a class="app-btn gpay" href="tez://upi/pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&tr=TEST001&tn=TableDash%20Test" onclick="showStatus()">
+      <span class="app-icon">G</span> GPay
+    </a>
+
+    <!-- PhonePe — uses phonepe:// scheme directly -->
+    <a class="app-btn phonepe" href="phonepe://pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&tr=TEST001" onclick="showStatus()">
+      <span class="app-icon">₱</span> PhonePe
+    </a>
+
+    <!-- Paytm — uses paytmmp:// scheme -->
+    <a class="app-btn paytm" href="paytmmp://upi/pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR" onclick="showStatus()">
+      <span class="app-icon">P</span> Paytm
+    </a>
+
+    <!-- BHIM -->
+    <a class="app-btn bhim" href="upi://pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&mode=00&tr=TEST001" onclick="showStatus()">
+      <span class="app-icon">B</span> BHIM
+    </a>
+
+    <!-- Generic — let OS decide -->
+    <a class="app-btn generic" href="upi://pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&tr=TEST001&tn=TableDash" onclick="showStatus()">
+      Any UPI App →
+    </a>
+  </div>
+
+  <div class="status pending" id="status">
+    ⏳ Waiting... Did the payment go through?
+    <br><br>
+    <button onclick="markDone()" style="background:#2a7a4a;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer">Yes — Payment done ✓</button>
+  </div>
+
+  <div class="note">
+    Money goes directly to S Hemanth Kumar's account.<br>
+    TableDash never holds your money.
+  </div>
+
+  <div class="debug">
+    <div class="debug-title">Debug info</div>
+    <div class="debug-row"><span class="dl">VPA</span><span class="dv">9535381386@paytm</span></div>
+    <div class="debug-row"><span class="dl">Amount</span><span class="dv">₹1.00</span></div>
+    <div class="debug-row"><span class="dl">Reference</span><span class="dv">TEST001</span></div>
+    <div class="debug-row"><span class="dl">Protocol</span><span class="dv" id="proto">-</span></div>
+  </div>
+</div>
+
+<script>
+function showStatus(){
+  setTimeout(()=>{
+    document.getElementById('status').className='status show pending';
+  }, 1500);
+}
+function markDone(){
+  document.getElementById('status').className='status show success';
+  document.getElementById('status').innerHTML='✅ Payment confirmed!<br><small>₹1 received by S Hemanth Kumar</small>';
+}
+document.getElementById('proto').textContent = window.location.protocol + '//' + (window.location.host || 'local file');
+</script>
+</body>
+</html>
