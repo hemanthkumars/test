@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pay ₹1 — TableDash Test</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#111;color:#fff;font-family:-apple-system,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#1a1a1a;border-radius:20px;padding:24px;max-width:340px;width:100%}
+.top{text-align:center;margin-bottom:24px}
+.to{font-size:12px;color:#666;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+.name{font-size:22px;font-weight:700;margin-bottom:2px}
+.vpa{font-size:12px;color:#555;font-family:monospace}
+.amt{font-size:52px;font-weight:700;color:#fff;margin:14px 0 4px}
+.divider{height:1px;background:#222;margin:20px 0}
+.label{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;text-align:center}
+.btn{display:block;width:100%;padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:10px;text-decoration:none;text-align:center}
+.btn-gpay{background:#4285f4;color:#fff}
+.btn-phonepe{background:#5f259f;color:#fff}
+.btn-paytm{background:#00baf2;color:#fff}
+.btn-any{background:#333;color:#fff;border:1px solid #444}
+.status{margin-top:16px;padding:12px;border-radius:10px;font-size:13px;text-align:center;color:#aaa;background:#111;border:1px solid #222;line-height:1.6}
+.proto{font-size:10px;color:#555;text-align:center;margin-top:12px;font-family:monospace}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="top">
+    <div class="to">Paying to</div>
+    <div class="name">S Hemanth Kumar</div>
+    <div class="vpa">9535381386@paytm</div>
+    <div class="amt">&#x20b9;1</div>
+  </div>
+  <div class="divider"></div>
+  <div class="label">Choose your UPI app</div>
+
+  <a class="btn btn-gpay" href="tez://upi/pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&tr=TEST001&tn=TableDash" onclick="tapped()">
+    G &nbsp; Pay with GPay
+  </a>
+  <a class="btn btn-phonepe" href="phonepe://pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&tr=TEST001&tn=TableDash" onclick="tapped()">
+    &#x20b1; &nbsp; Pay with PhonePe
+  </a>
+  <a class="btn btn-paytm" href="paytmmp://upi/pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&tr=TEST001&tn=TableDash" onclick="tapped()">
+    P &nbsp; Pay with Paytm
+  </a>
+  <a class="btn btn-any" href="upi://pay?pa=9535381386%40paytm&pn=S%20Hemanth%20Kumar&am=1.00&cu=INR&mode=00&tr=TEST001&tn=TableDash" onclick="tapped()">
+    Any UPI App
+  </a>
+
+  <div class="status" id="status">Tap any button above</div>
+  <div class="proto" id="proto"></div>
+</div>
+<script>
+document.getElementById('proto').textContent = window.location.protocol + '//' + (window.location.host||'local');
+function tapped(){
+  document.getElementById('status').textContent = 'Opening UPI app...';
+  setTimeout(function(){
+    document.getElementById('status').innerHTML =
+      'Did PIN appear?<br><br>'+
+      '<button onclick="paid()" style="background:#2a7a4a;color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer;margin-right:8px">Yes - Paid!</button>'+
+      '<button onclick="nope()" style="background:#333;color:#fff;border:1px solid #555;padding:8px 20px;border-radius:8px;font-size:13px;cursor:pointer">No</button>';
+  },3000);
+}
+function paid(){document.getElementById('status').innerHTML='<span style="color:#2a7a4a">Payment done! Tell Claude.</span>';}
+function nope(){document.getElementById('status').innerHTML='<span style="color:#c84a2a">Tell Claude which app opened and what error.</span>';}
+</script>
+</body>
+</html>
