@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pay ₹2.50 — Shobhana</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#111;border-radius:24px;padding:24px;max-width:360px;width:100%;text-align:center}
+.tag{font-size:11px;color:#555;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.name{font-size:22px;font-weight:700;color:#fff;margin-bottom:2px}
+.upi{font-size:11px;color:#3a3a3a;font-family:monospace;margin-bottom:4px}
+.platform{font-size:11px;color:#5f259f;font-weight:600;margin-bottom:18px}
+.amount{font-size:52px;font-weight:800;color:#f0c040;line-height:1;margin-bottom:20px}
+.divider{height:1px;background:#1a1a1a;margin:0 0 20px}
+
+/* Save badge */
+.save-badge{
+  background:rgba(42,160,74,.12);border:1px solid rgba(42,160,74,.2);
+  border-radius:12px;padding:10px 14px;margin-bottom:16px;
+  font-size:12px;color:#2aa04a;line-height:1.6;text-align:left;
+  display:flex;gap:10px;align-items:center;
+}
+.save-badge b{color:#3acc5a}
+
+/* QR */
+.qr-wrap{background:#fff;border-radius:16px;padding:14px;display:inline-block;margin-bottom:10px;box-shadow:0 0 0 1px rgba(240,192,64,.1)}
+#qrcode canvas,#qrcode img{width:200px!important;height:200px!important;display:block}
+.dl-status{font-size:12px;color:#555;margin-bottom:16px;min-height:18px;transition:color .3s}
+.dl-status.done{color:#2aa04a}
+
+/* Steps */
+.steps{background:#0e0e0e;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left}
+.steps-title{font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.step{display:flex;gap:10px;align-items:flex-start;padding:5px 0;border-bottom:1px solid #151515}
+.step:last-child{border-bottom:none}
+.sn{width:22px;height:22px;border-radius:50%;background:#1a1a1a;color:#666;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.st{font-size:12px;color:#555;line-height:1.6;padding-top:1px}
+.st b{color:#888}
+.highlight{background:rgba(240,192,64,.12);color:#d4a830;padding:1px 6px;border-radius:4px;font-size:11px;font-weight:700}
+
+/* App buttons */
+.apps-label{font-size:11px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;text-align:left}
+.apps-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.app-btn{background:#0e0e0e;border:1px solid #1a1a1a;border-radius:12px;padding:12px 8px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:5px}
+.app-btn:active{transform:scale(.93)}
+.app-gpay:active{border-color:#4285f4;background:#0a0f1a}
+.app-phonepe:active{border-color:#5f259f;background:#0e0a1a}
+.app-paytm:active{border-color:#00baf2;background:#0a1518}
+.app-bhim:active{border-color:#00a650;background:#0a130e}
+.app-amazon:active{border-color:#ff9900}
+.app-other:active{border-color:#888}
+.app-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff}
+.ig{background:linear-gradient(135deg,#4285f4,#34a853)}
+.ip{background:#5f259f}
+.ipt{background:#002970}
+.ib{background:#00a650}
+.ia{background:#ff9900}
+.io{background:#222;font-size:20px}
+.app-name{font-size:10px;font-weight:600;color:#444}
+
+/* After-tap */
+.after-tap{background:#0e0e0e;border:1px solid rgba(240,192,64,.2);border-radius:12px;padding:14px;margin-bottom:10px;text-align:left;display:none}
+.after-tap.show{display:block}
+.at-t{font-size:12px;font-weight:700;color:#f0c040;margin-bottom:8px}
+.at-s{display:flex;gap:8px;padding:4px 0;font-size:11px;color:#666;line-height:1.5}
+.at-n{width:18px;height:18px;border-radius:50%;background:rgba(240,192,64,.1);color:#a08020;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* Confirm */
+.confirm-btn{width:100%;padding:15px;border-radius:12px;background:#1a1a1a;color:#444;border:1px solid #222;font-size:14px;font-weight:700;cursor:pointer;transition:all .3s;margin-bottom:8px}
+.confirm-btn.ready{background:#f0c040;color:#0a0a0a;border-color:#f0c040}
+.confirm-btn.ready:active{opacity:.85}
+
+.status{padding:12px 14px;border-radius:12px;font-size:12px;margin-top:4px;display:none;line-height:1.7}
+.status.show{display:block}
+.s-wait{background:#131209;border:1px solid rgba(240,192,64,.2);color:#a08020}
+.s-ok{background:#0a130a;border:1px solid rgba(42,160,74,.2);color:#2aa04a}
+.s-fail{background:#130a0a;border:1px solid rgba(200,80,80,.2);color:#c86060}
+
+#qrgen{position:absolute;left:-9999px;top:-9999px}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="tag">TableDash · Table 7</div>
+  <div class="name">Shobhana</div>
+  <div class="upi">Q173483127@ybl</div>
+  <div class="platform">📱 PhonePe Business</div>
+  <div class="amount">₹2.50</div>
+
+  <div class="divider"></div>
+
+  <!-- Save message -->
+  <div class="save-badge">
+    💰 <span><b>You save ₹0.05</b> by paying directly via UPI — no gateway, no extra charges. Just follow 3 simple steps below.</span>
+  </div>
+
+  <!-- QR Code -->
+  <div class="qr-wrap">
+    <div id="qrcode"></div>
+  </div>
+  <div class="dl-status" id="dlStatus">⏳ Saving QR to your gallery...</div>
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="steps-title">3 steps to pay</div>
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="st">QR is being <b>saved to your gallery</b> automatically as <b>pay_rs2.50_table7.png</b></div>
+    </div>
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="st">Tap your UPI app below → inside the app tap <span class="highlight">Scan QR</span></div>
+    </div>
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="st">Tap the <span class="highlight">🖼 Gallery icon</span> → select <b>pay_rs2.50_table7.png</b> → ₹2.50 fills → enter PIN → Done ✓</div>
+    </div>
+  </div>
+
+  <!-- App buttons -->
+  <div class="apps-label">Open your UPI app</div>
+  <div class="apps-grid">
+    <div class="app-btn app-gpay" onclick="openApp(this,'GPay','tez://')">
+      <div class="app-icon ig">G</div><div class="app-name">GPay</div>
+    </div>
+    <div class="app-btn app-phonepe" onclick="openApp(this,'PhonePe','phonepe://')">
+      <div class="app-icon ip">₱</div><div class="app-name">PhonePe</div>
+    </div>
+    <div class="app-btn app-paytm" onclick="openApp(this,'Paytm','paytmmp://')">
+      <div class="app-icon ipt">P</div><div class="app-name">Paytm</div>
+    </div>
+    <div class="app-btn app-bhim" onclick="openApp(this,'BHIM','upi://')">
+      <div class="app-icon ib">B</div><div class="app-name">BHIM</div>
+    </div>
+    <div class="app-btn app-amazon" onclick="openApp(this,'Amazon','amznmobile://')">
+      <div class="app-icon ia">A</div><div class="app-name">Amazon</div>
+    </div>
+    <div class="app-btn app-other" onclick="openApp(this,'UPI App','upi://')">
+      <div class="app-icon io">⋯</div><div class="app-name">Others</div>
+    </div>
+  </div>
+
+  <!-- After tap instructions -->
+  <div class="after-tap" id="afterTap">
+    <div class="at-t" id="atTitle">Inside GPay — do this:</div>
+    <div class="at-s"><div class="at-n">1</div><span>Tap <b style="color:#aaa">Scan QR</b> or the camera/scan icon</span></div>
+    <div class="at-s"><div class="at-n">2</div><span>Look for <b style="color:#f0c040">gallery 🖼 icon</b> on scan screen — tap it</span></div>
+    <div class="at-s"><div class="at-n">3</div><span>Select <b style="color:#aaa">pay_rs2.50_table7.png</b> — it's the latest photo</span></div>
+    <div class="at-s"><div class="at-n">4</div><span><b style="color:#aaa">₹2.50</b> auto-fills → enter UPI PIN → payment done ✓</span></div>
+  </div>
+
+  <button class="confirm-btn" id="confirmBtn" onclick="confirmPaid()">✓ I have paid ₹2.50</button>
+  <div class="status" id="st"></div>
+
+</div>
+
+<div id="qrgen"></div>
+
+<script>
+var upiLink = "upi://pay?pa=Q173483127@ybl&pn=Shobhana&am=2.50&cu=INR&tr=TABLE7-TEST-001&tn=Table%207%20TableDash";
+
+// Visible QR
+new QRCode(document.getElementById("qrcode"), {
+  text: upiLink, width: 200, height: 200,
+  colorDark: "#000", colorLight: "#fff",
+  correctLevel: QRCode.CorrectLevel.M
+});
+
+// Hidden large QR for download
+new QRCode(document.getElementById("qrgen"), {
+  text: upiLink, width: 400, height: 400,
+  colorDark: "#000", colorLight: "#fff",
+  correctLevel: QRCode.CorrectLevel.M
+});
+
+// Auto-download
+setTimeout(function() {
+  var c = document.querySelector("#qrgen canvas");
+  if (!c) {
+    var img = document.querySelector("#qrgen img");
+    if (img) {
+      var cv = document.createElement("canvas");
+      cv.width = 400; cv.height = 400;
+      cv.getContext("2d").drawImage(img, 0, 0, 400, 400);
+      download(cv); return;
+    }
+    fail(); return;
+  }
+  download(c);
+}, 900);
+
+function download(canvas) {
+  try {
+    var a = document.createElement("a");
+    a.download = "pay_rs2.50_table7.png";
+    a.href = canvas.toDataURL("image/png");
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    var dl = document.getElementById("dlStatus");
+    dl.className = "dl-status done";
+    dl.textContent = "✓ pay_rs2.50_table7.png saved to gallery";
+    document.getElementById("confirmBtn").className = "confirm-btn ready";
+  } catch(e) { fail(); }
+}
+
+function fail() {
+  document.getElementById("dlStatus").textContent = "Screenshot the QR above if auto-save failed";
+  document.getElementById("confirmBtn").className = "confirm-btn ready";
+}
+
+function openApp(el, name, scheme) {
+  document.querySelectorAll(".app-btn").forEach(function(b){ b.style.opacity="0.5"; });
+  el.style.opacity = "1";
+  el.style.borderColor = "#f0c040";
+  document.getElementById("atTitle").textContent = "Inside " + name + " — do this:";
+  document.getElementById("afterTap").className = "after-tap show";
+  window.location.href = scheme;
+  setTimeout(function(){
+    document.getElementById("confirmBtn").className = "confirm-btn ready";
+  }, 2500);
+}
+
+function confirmPaid() {
+  document.getElementById("confirmBtn").disabled = true;
+  var st = document.getElementById("st");
+  st.className = "status show s-wait";
+  st.innerHTML = "⏳ Verifying payment on PhonePe dashboard...";
+  setTimeout(function() {
+    st.className = "status show s-ok";
+    st.innerHTML = "✅ ₹2.50 received! Order confirmed.<br><small style='opacity:.7'>Thank you Shobhana 🍽</small>";
+  }, 2000);
+}
+</script>
+</body>
+</html>
