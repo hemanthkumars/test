@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TableDash</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --green:  #22a45d;
+  --red:    #e74c3c;
+  --accent: #ff6b35;
+  --text:   #1a1a1a;
+  --sub:    #666;
+  --light:  #f5f5f5;
+  --border: #ebebeb;
+  --white:  #ffffff;
+}
+html,body{background:#f8f8f8;font-family:'Nunito',sans-serif;color:var(--text);max-width:430px;margin:0 auto}
+
+/* ── Header ── */
+.header{background:var(--white);padding:16px 16px 0;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.resto{font-size:20px;font-weight:900;color:var(--text)}
+.table-tag{background:#fff3ee;border:1px solid #ffd4c2;color:var(--accent);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px}
+.search{position:relative;margin-bottom:12px}
+.search input{width:100%;background:var(--light);border:none;border-radius:10px;padding:11px 16px 11px 40px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none}
+.search input::placeholder{color:#aaa}
+.search-ic{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.5}
+.cats{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;background:var(--light);border:none;border-radius:8px;padding:8px 16px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer}
+.cat.on{background:var(--accent);color:#fff}
+
+/* ── Content ── */
+.content{padding:0 0 160px}
+.sec-head{font-size:15px;font-weight:800;color:var(--text);padding:18px 16px 8px;background:#f8f8f8;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── Item card ── */
+.item{background:var(--white);padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center}
+.item-left{flex:1;min-width:0}
+.dot-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.dot{width:14px;height:14px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.dot.v{border:2px solid var(--green)}
+.dot.v::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--green)}
+.dot.nv{border:2px solid var(--red)}
+.dot.nv::after{content:'';width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--red);transform:scale(.7)}
+.tag-pop{background:#fff8e6;color:#e67e00;font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px}
+.tag-best{background:#f0fff7;color:var(--green);font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px}
+.iname{font-size:15px;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.3}
+.idesc{font-size:12px;color:var(--sub);line-height:1.5;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ifoot{display:flex;align-items:center;justify-content:space-between}
+.iprice{font-size:16px;font-weight:900;color:var(--text)}
+
+/* ── ADD button ── */
+.add-btn{background:var(--white);border:2px solid var(--accent);color:var(--accent);border-radius:8px;padding:7px 20px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer}
+.add-btn:active{background:var(--accent);color:#fff}
+
+/* ── Qty control ── */
+.qty{display:flex;align-items:center;gap:0;border:2px solid var(--accent);border-radius:8px;overflow:hidden;background:var(--white)}
+.qb{width:36px;height:34px;background:none;border:none;color:var(--accent);font-size:20px;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;display:flex;align-items:center;justify-content:center}
+.qb:active{background:#fff3ee}
+.qn{width:30px;text-align:center;font-size:15px;font-weight:800;color:var(--text)}
+
+/* ── Item image ── */
+.iimg{width:80px;height:80px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:32px}
+
+/* ── Cart bar ── */
+.cart-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:12px 16px 28px;background:var(--white);border-top:1px solid var(--border);z-index:100;display:none}
+.cart-bar.show{display:block}
+.cart-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:16px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.cart-btn:active{opacity:.9}
+.cb-left{display:flex;align-items:center;gap:10px}
+.cb-badge{background:rgba(255,255,255,.25);border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900}
+
+/* ── Overlay ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none}
+.overlay.show{display:block}
+
+/* ── Cart sheet ── */
+.sheet{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:430px;background:var(--white);border-radius:20px 20px 0 0;z-index:300;max-height:88vh;display:flex;flex-direction:column;transition:transform .28s ease}
+.sheet.open{transform:translateX(-50%) translateY(0)}
+.handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+.sh-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.sh-title{font-size:18px;font-weight:900}
+.sh-close{width:32px;height:32px;background:var(--light);border:none;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--sub)}
+.sh-body{overflow-y:auto;flex:1;padding:0}
+.ci{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}
+.ci-em{font-size:28px;flex-shrink:0}
+.ci-info{flex:1}
+.ci-name{font-size:14px;font-weight:800;margin-bottom:2px}
+.ci-sub{font-size:12px;color:var(--sub)}
+.empty{padding:48px 16px;text-align:center;color:var(--sub)}
+.empty-em{font-size:44px;margin-bottom:10px}
+.empty-t{font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.empty-s{font-size:13px}
+
+/* ── Order type ── */
+.ot-wrap{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.ot-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--sub);margin-bottom:10px}
+.ot-btns{display:flex;gap:8px}
+.ot{flex:1;background:var(--light);border:2px solid transparent;border-radius:10px;padding:12px 8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--sub);cursor:pointer;text-align:center}
+.ot.on{background:#fff3ee;border-color:#ffd4c2;color:var(--accent)}
+
+/* Special */
+.sp-wrap{padding:0 16px 14px;flex-shrink:0;border-bottom:1px solid var(--border)}
+.sp-input{width:100%;background:var(--light);border:none;border-radius:10px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text);resize:none;height:56px;outline:none}
+.sp-input::placeholder{color:#bbb}
+
+/* Bill */
+.bill{padding:14px 16px 0;flex-shrink:0}
+.brow{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);padding:3px 0}
+.btotal{display:flex;justify-content:space-between;font-size:17px;font-weight:900;color:var(--text);padding:10px 0 0;border-top:1px solid var(--border);margin-top:6px}
+
+/* Place btn */
+.place{margin:14px 16px 28px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:17px;width:calc(100% - 32px);font-family:'Nunito',sans-serif;font-size:16px;font-weight:900;cursor:pointer;flex-shrink:0}
+.place:active{opacity:.9}
+
+/* Toast */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="top-row">
+    <div class="resto">Spice Route</div>
+    <div class="table-tag">Table 7</div>
+  </div>
+  <div class="search">
+    <span class="search-ic">🔍</span>
+    <input type="text" placeholder="Search dishes..." id="searchInput" oninput="applyFilters()">
+  </div>
+  <div class="cats" id="catRow">
+    <button class="cat on"  onclick="setCat(this,'all')">All</button>
+    <button class="cat"     onclick="setCat(this,'starters')">Starters</button>
+    <button class="cat"     onclick="setCat(this,'mains')">Main Course</button>
+    <button class="cat"     onclick="setCat(this,'breads')">Breads</button>
+    <button class="cat"     onclick="setCat(this,'desserts')">Desserts</button>
+    <button class="cat"     onclick="setCat(this,'drinks')">Drinks</button>
+  </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<div class="cart-bar" id="cartBar">
+  <button class="cart-btn" onclick="openCart()">
+    <div class="cb-left">
+      <div class="cb-badge" id="cbCount">0</div>
+      <span>View Cart</span>
+    </div>
+    <span id="cbTotal">₹0</span>
+  </button>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<div class="sheet" id="sheet">
+  <div class="handle"></div>
+  <div class="sh-head">
+    <div class="sh-title">Your Order</div>
+    <button class="sh-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="sh-body" id="shBody"></div>
+  <div class="ot-wrap">
+    <div class="ot-label">Order Type</div>
+    <div class="ot-btns">
+      <button class="ot on" onclick="setOT(this,'dine')">🍽 &nbsp;Dine In</button>
+      <button class="ot"    onclick="setOT(this,'parcel')">📦 &nbsp;Parcel</button>
+      <button class="ot"    onclick="setOT(this,'counter')">🧍 &nbsp;Counter</button>
+    </div>
+  </div>
+  <div class="sp-wrap" style="padding-top:14px">
+    <textarea class="sp-input" placeholder="Special instructions... (optional)" id="spNote"></textarea>
+  </div>
+  <div class="bill">
+    <div class="brow"><span>Subtotal</span><span id="bSub">₹0</span></div>
+    <div class="brow"><span>GST (5%)</span><span id="bGst">₹0</span></div>
+    <div class="btotal"><span>Total</span><span id="bTotal">₹0</span></div>
+  </div>
+  <button class="place" id="placeBtn" onclick="placeOrder()">Place Order</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var MENU=[
+  {id:1,  name:"Paneer Tikka",          cat:"starters", price:220, veg:true,  pop:true,  best:false, em:"🧀", desc:"Marinated paneer grilled in tandoor with mint chutney"},
+  {id:2,  name:"Veg Spring Rolls",       cat:"starters", price:160, veg:true,  pop:false, best:false, em:"🥢", desc:"Crispy rolls with seasoned vegetables and glass noodles"},
+  {id:3,  name:"Chicken 65",             cat:"starters", price:280, veg:false, pop:true,  best:true,  em:"🍗", desc:"Spicy deep-fried chicken with curry leaves"},
+  {id:4,  name:"Mushroom Pepper Fry",    cat:"starters", price:200, veg:true,  pop:false, best:false, em:"🍄", desc:"Button mushrooms tossed in black pepper and spices"},
+  {id:5,  name:"Dal Makhani",            cat:"mains",    price:260, veg:true,  pop:true,  best:true,  em:"🫕", desc:"Slow-cooked black lentils with butter and cream"},
+  {id:6,  name:"Paneer Butter Masala",   cat:"mains",    price:300, veg:true,  pop:false, best:false, em:"🍛", desc:"Soft paneer in rich tomato-cream gravy"},
+  {id:7,  name:"Chicken Biryani",        cat:"mains",    price:380, veg:false, pop:true,  best:true,  em:"🍚", desc:"Aromatic basmati rice with spiced chicken. Served with raita"},
+  {id:8,  name:"Mutton Rogan Josh",      cat:"mains",    price:440, veg:false, pop:false, best:false, em:"🥘", desc:"Kashmiri slow-cooked mutton in fragrant spices"},
+  {id:9,  name:"Butter Naan",            cat:"breads",   price:50,  veg:true,  pop:false, best:false, em:"🫓", desc:"Soft tandoor bread brushed with butter"},
+  {id:10, name:"Garlic Naan",            cat:"breads",   price:60,  veg:true,  pop:true,  best:false, em:"🫓", desc:"Tandoor bread with minced garlic and coriander"},
+  {id:11, name:"Laccha Paratha",         cat:"breads",   price:55,  veg:true,  pop:false, best:false, em:"🫓", desc:"Multi-layered flaky whole wheat flatbread"},
+  {id:12, name:"Gulab Jamun",            cat:"desserts", price:120, veg:true,  pop:true,  best:false, em:"🍮", desc:"Soft milk solids in rose-scented sugar syrup"},
+  {id:13, name:"Mango Kulfi",            cat:"desserts", price:140, veg:true,  pop:false, best:false, em:"🍨", desc:"Traditional Indian ice cream with Alphonso mango"},
+  {id:14, name:"Masala Chai",            cat:"drinks",   price:60,  veg:true,  pop:false, best:false, em:"🍵", desc:"Spiced milk tea with ginger and cardamom"},
+  {id:15, name:"Fresh Lime Soda",        cat:"drinks",   price:80,  veg:true,  pop:true,  best:false, em:"🍋", desc:"Sweet, salted or mixed — your choice"},
+  {id:16, name:"Mango Lassi",            cat:"drinks",   price:120, veg:true,  pop:false, best:false, em:"🥛", desc:"Thick yoghurt mango drink, chilled"},
+];
+
+var cart={}, activeCat="all", ot="dine";
+
+var CAT_LABELS={starters:"Starters",mains:"Main Course",breads:"Breads",desserts:"Desserts",drinks:"Drinks"};
+
+function renderMenu(items){
+  if(!items.length){document.getElementById("content").innerHTML='<div style="padding:60px 16px;text-align:center;color:#aaa;font-size:15px;font-weight:700">No items found</div>';return;}
+  var groups={};
+  items.forEach(function(i){if(!groups[i.cat])groups[i.cat]=[];groups[i.cat].push(i);});
+  var html="";
+  ["starters","mains","breads","desserts","drinks"].forEach(function(c){
+    if(!groups[c])return;
+    html+='<div class="sec-head">'+CAT_LABELS[c]+'</div>';
+    groups[c].forEach(function(item){html+=card(item);});
+  });
+  document.getElementById("content").innerHTML=html;
+}
+
+function card(item){
+  var q=cart[item.id]||0;
+  var tags='';
+  if(item.pop) tags+='<span class="tag-pop">★ Popular</span>';
+  if(item.best) tags+='<span class="tag-best">✓ Bestseller</span>';
+
+  var ctrl=q>0
+    ?'<div class="qty"><button class="qb" onclick="chg(event,'+item.id+',-1)">−</button><span class="qn">'+q+'</span><button class="qb" onclick="chg(event,'+item.id+',1)">+</button></div>'
+    :'<button class="add-btn" onclick="chg(event,'+item.id+',1)">ADD</button>';
+
+  return '<div class="item" id="card-'+item.id+'">'
+    +'<div class="item-left">'
+      +'<div class="dot-row">'
+        +(item.veg?'<div class="dot v"></div>':'<div class="dot nv"></div>')
+        +tags
+      +'</div>'
+      +'<div class="iname">'+item.name+'</div>'
+      +'<div class="idesc">'+item.desc+'</div>'
+      +'<div class="ifoot"><div class="iprice">₹'+item.price+'</div>'+ctrl+'</div>'
+    +'</div>'
+    +'<div class="iimg">'+item.em+'</div>'
+  +'</div>';
+}
+
+function chg(e,id,d){
+  e.stopPropagation();
+  var item=MENU.find(function(i){return i.id===id;});
+  var prev=cart[id]||0;
+  var next=Math.max(0,prev+d);
+  if(next===0)delete cart[id]; else cart[id]=next;
+
+  // patch just the control area
+  var c=document.getElementById("card-"+id);
+  if(c){
+    var foot=c.querySelector(".ifoot");
+    var old=foot.querySelector(".add-btn,.qty");
+    var tmp=document.createElement("div");
+    tmp.innerHTML=next>0
+      ?'<div class="qty"><button class="qb" onclick="chg(event,'+id+',-1)">−</button><span class="qn">'+next+'</span><button class="qb" onclick="chg(event,'+id+',1)">+</button></div>'
+      :'<button class="add-btn" onclick="chg(event,'+id+',1)">ADD</button>';
+    foot.replaceChild(tmp.firstChild,old);
+  }
+
+  if(prev===0&&next===1)toast("Added — "+item.name);
+  updateBar();
+}
+
+function updateBar(){
+  var total=0,count=0;
+  Object.keys(cart).forEach(function(id){
+    var item=MENU.find(function(i){return i.id===parseInt(id);});
+    total+=item.price*cart[id]; count+=cart[id];
+  });
+  var bar=document.getElementById("cartBar");
+  document.getElementById("cbCount").textContent=count;
+  document.getElementById("cbTotal").textContent="₹"+total;
+  bar.className="cart-bar"+(count>0?" show":"");
+}
+
+function openCart(){
+  renderSheet();
+  document.getElementById("overlay").className="overlay show";
+  document.getElementById("sheet").className="sheet open";
+}
+function closeCart(){
+  document.getElementById("overlay").className="overlay";
+  document.getElementById("sheet").className="sheet";
+}
+
+function renderSheet(){
+  var keys=Object.keys(cart);
+  if(!keys.length){
+    document.getElementById("shBody").innerHTML='<div class="empty"><div class="empty-em">🛒</div><div class="empty-t">Cart is empty</div><div class="empty-s">Add items from the menu</div></div>';
+    document.getElementById("bSub").textContent="₹0";
+    document.getElementById("bGst").textContent="₹0";
+    document.getElementById("bTotal").textContent="₹0";
+    document.getElementById("placeBtn").textContent="Place Order";
+    return;
+  }
+  var sub=0,html="";
+  keys.forEach(function(id){
+    var item=MENU.find(function(i){return i.id===parseInt(id);});
+    var lt=item.price*cart[id]; sub+=lt;
+    html+='<div class="ci">'
+      +'<span class="ci-em">'+item.em+'</span>'
+      +'<div class="ci-info"><div class="ci-name">'+item.name+'</div>'
+      +'<div class="ci-sub">₹'+item.price+' × '+cart[id]+' = ₹'+lt+'</div></div>'
+      +'<div class="qty"><button class="qb" onclick="shChg('+id+',-1)">−</button><span class="qn">'+cart[id]+'</span><button class="qb" onclick="shChg('+id+',1)">+</button></div>'
+    +'</div>';
+  });
+  document.getElementById("shBody").innerHTML=html;
+  var gst=Math.round(sub*.05);
+  var total=sub+gst;
+  document.getElementById("bSub").textContent="₹"+sub;
+  document.getElementById("bGst").textContent="₹"+gst;
+  document.getElementById("bTotal").textContent="₹"+total;
+  document.getElementById("placeBtn").textContent="Place Order  ₹"+total;
+}
+
+function shChg(id,d){chg({stopPropagation:function(){}},id,d);renderSheet();}
+
+function setOT(btn,t){
+  ot=t;
+  document.querySelectorAll(".ot").forEach(function(b){b.className="ot";});
+  btn.className="ot on";
+}
+
+function setCat(btn,c){
+  activeCat=c;
+  document.querySelectorAll(".cat").forEach(function(b){b.className="cat";});
+  btn.className="cat on";
+  applyFilters();
+}
+
+function applyFilters(){
+  var q=document.getElementById("searchInput").value.toLowerCase();
+  var f=MENU.filter(function(i){
+    return(activeCat==="all"||i.cat===activeCat)&&(!q||i.name.toLowerCase().includes(q)||i.desc.toLowerCase().includes(q));
+  });
+  renderMenu(f);
+}
+
+function placeOrder(){
+  if(!Object.keys(cart).length){toast("Add items first");return;}
+  closeCart();
+  toast("🎉 Order placed! Kitchen notified");
+  setTimeout(function(){cart={};updateBar();renderMenu(MENU);},800);
+}
+
+var tt;
+function toast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg;t.className="toast show";
+  clearTimeout(tt);tt=setTimeout(function(){t.className="toast";},2000);
+}
+
+renderMenu(MENU);
+</script>
+</body>
+</html>
