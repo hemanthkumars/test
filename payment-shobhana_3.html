@@ -156,7 +156,7 @@ function buildUpiLink(amount, note) {
     + "&pn="  + encodeURIComponent(CONFIG.payeeName)
     + "&am="  + parseFloat(amount).toFixed(2)
     + "&cu=INR"
-    + "&tr="  + "table-dash"+note
+    + "&tr="  + Math.floor(Math.random() * 10)
     + "&tn="  + encodeURIComponent(note);
 }
 
