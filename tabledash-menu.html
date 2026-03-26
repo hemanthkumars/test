@@ -232,6 +232,7 @@ function card(item){
     :'<button class="add-btn" onclick="chg(event,'+item.id+',1)">ADD</button>';
 
   return '<div class="item" id="card-'+item.id+'">'
+    +'<div class="iimg">'+item.em+'</div>'
     +'<div class="item-left">'
       +'<div class="dot-row">'
         +(item.veg?'<div class="dot v"></div>':'<div class="dot nv"></div>')
@@ -241,7 +242,6 @@ function card(item){
       +'<div class="idesc">'+item.desc+'</div>'
       +'<div class="ifoot"><div class="iprice">₹'+item.price+'</div>'+ctrl+'</div>'
     +'</div>'
-    +'<div class="iimg">'+item.em+'</div>'
   +'</div>';
 }
 
